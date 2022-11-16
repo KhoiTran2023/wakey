@@ -58,7 +58,7 @@ def main():
     if not cap.isOpened():  # if the camera can't be opened exit the program
         print("Cannot open camera")
         exit()
-
+    
     while True:  # infinite loop for webcam video capture
 
         delta_time = time.perf_counter() - prev_time  # delta time for FPS capping
@@ -150,6 +150,19 @@ def main():
                 if distracted:
                     cv2.putText(frame, "DISTRACTED!", (10, 340),
                                 cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 255), 1, cv2.LINE_AA)
+                
+
+                warnState = counter>=(fps*15)
+                if tired or perclos_score>= 0.15:
+                    counter+=1
+                    print("careful, you may be tired!")
+                if gaze is None:
+                    if gazeCounter>=fps_lim:
+                        gazeCounter=0
+                        print("danger, eyes closed!")
+                    gazeCounter+=1
+                if warnState:
+                    print("please stop driving immediately! you are tired.")
             
 
             cv2.imshow("Frame", frame)  # show the frame on screen
@@ -163,9 +176,9 @@ def main():
 
     return
 
-'''
-#FUNCTIONS NOT TO BE USED YET
 
+#FUNCTIONS NOT TO BE USED YET, TESTING PHASE
+'''
 def indication():
     # compute the PERCLOS score and state of tiredness
     fps_lim = 25
