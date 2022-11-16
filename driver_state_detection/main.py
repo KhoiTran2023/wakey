@@ -28,7 +28,7 @@ def main():
     ctime = 0  # current time (used to compute FPS)
     ptime = 0  # past time (used to compute FPS)
     prev_time = 0  # previous time variable, used to set the FPS limit
-    fps_lim = 25  # FPS upper limit value, needed for estimating the time for each frame and increasing performances
+    fps_lim = 10  # FPS upper limit value, needed for estimating the time for each frame and increasing performances
     time_lim = 1. / fps_lim  # time window for each frame taken by the webcam
 
     cv2.setUseOptimized(True)  # set OpenCV optimization to True
@@ -55,6 +55,12 @@ def main():
     
     # capture the input from the default system camera (camera number 0)
     cap = cv2.VideoCapture(CAPTURE_SOURCE)
+
+    gazeCounter = 0
+    counter = 0
+    perclos_tresh = 0.15
+    warnState = False
+
     if not cap.isOpened():  # if the camera can't be opened exit the program
         print("Cannot open camera")
         exit()
@@ -151,10 +157,10 @@ def main():
                     cv2.putText(frame, "DISTRACTED!", (10, 340),
                                 cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 255), 1, cv2.LINE_AA)
                 
-
-                warnState = counter>=(fps*15)
-                if tired or perclos_score>= 0.15:
+                if tired or perclos_score>= perclos_tresh:
                     counter+=1
+                    if counter==fps_lim*(120-2*round(perclos_tresh*50,0))
+                        warnState = True
                     print("careful, you may be tired!")
                 if gaze is None:
                     if gazeCounter>=fps_lim:
@@ -187,7 +193,7 @@ def indication():
     counter = 0
     gaze = Eye_det.get_Gaze_Score(frame=gray, landmarks=landmarks)
     #running inside the loop
-    warnState = counter>=(fps*15)
+    warnState = counter==2
     if tired or perclos_score>= 0.15:
         counter+=1
         print("careful, you may be tired!")
