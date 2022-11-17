@@ -60,6 +60,7 @@ def main():
     counter = 0
     perclos_tresh = 0.15
     warnState = False
+    level_two_warning = fps_lim*90
 
     if not cap.isOpened():  # if the camera can't be opened exit the program
         print("Cannot open camera")
@@ -159,7 +160,7 @@ def main():
                 
                 if tired or perclos_score>= perclos_tresh:
                     counter+=1
-                    if counter==fps_lim*(120-2*round(perclos_tresh*50,0))
+                    if counter>=level_two_warning:
                         warnState = True
                     print("careful, you may be tired!")
                 if gaze is None:
