@@ -9,6 +9,8 @@ from Eye_Dector_Module import EyeDetector as EyeDet
 from Pose_Estimation_Module import HeadPoseEstimator as HeadPoseEst
 from Attention_Scorer_Module import AttentionScorer as AttScorer
 
+from imutils import face_utils
+
 # capture source number select the webcam to use (default is zero -> built in camera)
 CAPTURE_SOURCE = 0
 
@@ -22,6 +24,18 @@ camera_matrix = np.array(
 dist_coeffs = np.array(
     [[-0.03792548, 0.09233237, 0.00419088, 0.00317323, -0.15804257]], dtype="double")
 
+def lip_distance(shape):
+    top_lip = shape[50:53]
+    top_lip = np.concatenate((top_lip, shape[61:64]))
+
+    low_lip = shape[56:59]
+    low_lip = np.concatenate((low_lip, shape[65:68]))
+
+    top_mean = np.mean(top_lip, axis=0)
+    low_mean = np.mean(low_lip, axis=0)
+
+    distance = abs(top_mean[1] - low_mean[1])
+    return distance
 
 def main():
 
@@ -95,6 +109,27 @@ def main():
 
             # find the faces using the dlib face detector
             faces = Detector(gray)
+            detector = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")    #Faster but less accurate
+            predictor = dlib.shape_predictor('predictor/shape_predictor_68_face_landmarks.dat')
+            #yawn
+            rects = detector.detectMultiScale(gray, scaleFactor=1.1, 
+		    minNeighbors=5, minSize=(30, 30),
+		    flags=cv2.CASCADE_SCALE_IMAGE)
+
+             #for rect in rects:
+            for (x, y, w, h) in rects:
+                rect = dlib.rectangle(int(x), int(y), int(x + w),int(y + h))
+                
+                shape = predictor(gray, rect)
+                shape = face_utils.shape_to_np(shape)
+
+                distance = lip_distance(shape)
+
+                lip = shape[48:60]
+                cv2.drawContours(frame, [lip], -1, (0, 255, 0), 1)
+
+                if (distance > 20):
+                    print("YAWN")
 
             if len(faces) > 0:  # process the frame only if at least a face is found
 
