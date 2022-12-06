@@ -5,8 +5,7 @@ import dlib
 import numpy as np
 
 from Utils import get_face_area
-from Eye_Dector_Module import EyeDetector as EyeDet
-from Pose_Estimation_Module import HeadPoseEstimator as HeadPoseEst
+from Eye_Dector_Module import EyeDetector as EyeDets
 from Attention_Scorer_Module import AttentionScorer as AttScorer
 
 from imutils import face_utils
@@ -61,7 +60,7 @@ def main():
     '''
 
     # instantiation of the eye detector and pose estimator objects
-    Eye_det = EyeDet(show_processing=False)
+    Eye_det = EyeDets(show_processing=False)
 
 
     # instantiation of the attention scorer object, with the various thresholds
