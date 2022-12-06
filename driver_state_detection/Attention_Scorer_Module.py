@@ -81,7 +81,7 @@ class AttentionScorer:
 
         self.verbose = verbose
 
-    def eval_scores(self, ear_score, gaze_score, head_roll, head_pitch, head_yaw):
+    def eval_scores(self, ear_score, gaze_score):
         """
         :param ear_score: float
             EAR (Eye Aspect Ratio) score obtained from the driver eye aperture
@@ -141,14 +141,6 @@ class AttentionScorer:
                 self.gaze_counter += 1
         elif self.gaze_counter > 0:
             self.gaze_counter -= 1
-
-        if ((self.roll_tresh is not None and head_roll is not None and head_roll > self.roll_tresh) or (
-                head_pitch is not None and abs(head_pitch) > self.pitch_tresh) or (
-                head_yaw is not None and abs(head_yaw) > self.yaw_tresh)):
-            if not distracted:
-                self.pose_counter += 1
-        elif self.pose_counter > 0:
-            self.pose_counter -= 1
 
         if self.verbose:  # print additional info if verbose is True
             print(

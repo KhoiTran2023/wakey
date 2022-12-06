@@ -63,7 +63,6 @@ def main():
     # instantiation of the eye detector and pose estimator objects
     Eye_det = EyeDet(show_processing=False)
 
-    Head_pose = HeadPoseEst(show_axis=True)
 
     # instantiation of the attention scorer object, with the various thresholds
     # NOTE: set verbose to True for additional printed information about the scores
@@ -154,12 +153,6 @@ def main():
                 # compute the Gaze Score
                 gaze = Eye_det.get_Gaze_Score(frame=gray, landmarks=landmarks)
 
-                # compute the head pose
-                frame_det, roll, pitch, yaw = Head_pose.get_pose(frame=frame, landmarks=landmarks)
-
-                # if the head pose estimation is successful, show the results
-                if frame_det is not None:
-                    frame = frame_det
 
                 # show the real-time EAR score
                 if ear is not None:
@@ -182,7 +175,7 @@ def main():
 
                 # evaluate the scores for EAR, GAZE and HEAD POSE
                 asleep, looking_away, distracted = Scorer.eval_scores(
-                    ear, gaze, roll, pitch, yaw)  
+                    ear, gaze)  
 
                 # if the state of attention of the driver is not normal, show an alert on screen
                 if asleep:
