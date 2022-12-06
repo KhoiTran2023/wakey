@@ -236,31 +236,6 @@ def indication():
         print("please stop driving immediately! you are tired.")
     return
 
-def lip_distance(landmarks):
-
-    #prerequisites
-    Detector = dlib.get_frontal_face_detector()
-    Predictor = dlib.shape_predictor("predictor/shape_predictor_68_face_landmarks.dat")
-    faces = Detector(gray)
-    faces = sorted(faces, key=get_face_area, reverse=True)
-    driver_face = faces[0]
-
-    # predict the 68 facial keypoints position
-    landmarks = Predictor(gray, driver_face)
-
-    #running inside the loop
-    top_lip = landmarks[50:53]
-    top_lip = np.concatenate((top_lip, landmarks[61:64]))
-
-    low_lip = landmarks[56:59]
-    low_lip = np.concatenate((low_lip, landmarks[65:68]))
-
-    top_mean = np.mean(top_lip, axis=0)
-    low_mean = np.mean(low_lip, axis=0)
-
-    distance = abs(top_mean[1] - low_mean[1])
-    return distance
-
 def yawn_detection():
     #also another way to do this is a yawn threshold of 20
 
