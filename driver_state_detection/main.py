@@ -14,6 +14,9 @@ from imutils import face_utils
 # capture source number select the webcam to use (default is zero -> built in camera)
 CAPTURE_SOURCE = 0
 
+detector = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")    #Faster but less accurate
+predictor = dlib.shape_predictor('predictor/shape_predictor_68_face_landmarks.dat')
+
 # camera matrix obtained from the camera calibration script, using a 9x6 chessboard
 camera_matrix = np.array(
     [[899.12150372, 0., 644.26261492],
@@ -109,8 +112,7 @@ def main():
 
             # find the faces using the dlib face detector
             faces = Detector(gray)
-            detector = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")    #Faster but less accurate
-            predictor = dlib.shape_predictor('predictor/shape_predictor_68_face_landmarks.dat')
+
             #yawn
             rects = detector.detectMultiScale(gray, scaleFactor=1.1, 
 		    minNeighbors=5, minSize=(30, 30),
