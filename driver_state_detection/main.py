@@ -4,7 +4,7 @@ import cv2
 import dlib
 import numpy as np
 
-from Utils import get_face_area
+from Utils import get_face_area, lip_distance
 from Eye_Dector_Module import EyeDetector as EyeDets
 from Attention_Scorer_Module import AttentionScorer as AttScorer
 
@@ -26,25 +26,13 @@ camera_matrix = np.array(
 dist_coeffs = np.array(
     [[-0.03792548, 0.09233237, 0.00419088, 0.00317323, -0.15804257]], dtype="double")
 
-def lip_distance(shape):
-    top_lip = shape[50:53]
-    top_lip = np.concatenate((top_lip, shape[61:64]))
-
-    low_lip = shape[56:59]
-    low_lip = np.concatenate((low_lip, shape[65:68]))
-
-    top_mean = np.mean(top_lip, axis=0)
-    low_mean = np.mean(low_lip, axis=0)
-
-    distance = abs(top_mean[1] - low_mean[1])
-    return distance
 
 def main():
 
     ctime = 0  # current time (used to compute FPS)
     ptime = 0  # past time (used to compute FPS)
     prev_time = 0  # previous time variable, used to set the FPS limit
-    fps_lim = 10  # FPS upper limit value, needed for estimating the time for each frame and increasing performances
+    fps_lim = 9  # FPS upper limit value, needed for estimating the time for each frame and increasing performances
     time_lim = 1. / fps_lim  # time window for each frame taken by the webcam
 
     cv2.setUseOptimized(True)  # set OpenCV optimization to True
@@ -72,10 +60,12 @@ def main():
     cap = cv2.VideoCapture(CAPTURE_SOURCE)
 
     gazeCounter = 0
-    counter = 0
+    tiredCounter = 0
+    yawnCounter = 0
+    yawnTresh = 4
     perclos_tresh = 0.15
     warnState = False
-    level_two_warning = int(fps_lim*60*perclos_tresh)
+    level_two_warning = int(fps_lim*120*perclos_tresh)
 
     if not cap.isOpened():  # if the camera can't be opened exit the program
         print("Cannot open camera")
@@ -116,7 +106,7 @@ def main():
 		    minNeighbors=5, minSize=(30, 30),
 		    flags=cv2.CASCADE_SCALE_IMAGE)
 
-             #for rect in rects:
+            #for rect in rects:
             for (x, y, w, h) in rects:
                 rect = dlib.rectangle(int(x), int(y), int(x + w),int(y + h))
                 
@@ -127,9 +117,15 @@ def main():
 
                 lip = shape[48:60]
                 cv2.drawContours(frame, [lip], -1, (0, 255, 0), 1)
-
-                if (distance > 20):
-                    print("YAWN")
+                
+                #yawn evaluation
+                if (distance > 40):
+                    yawnCounter += 1
+                else:
+                    if(yawnCounter >= fps_lim*yawnTresh):
+                        print("you yawned!")
+                        warnState = True
+                    yawnCounter = 0
 
             if len(faces) > 0:  # process the frame only if at least a face is found
 
@@ -172,7 +168,7 @@ def main():
                     cv2.putText(frame, "TIRED!", (10, 280),
                                 cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 255), 1, cv2.LINE_AA)
 
-                # evaluate the scores for EAR, GAZE and HEAD POSE
+                # evaluate the scores for EAR, GAZE
                 asleep, looking_away, distracted = Scorer.eval_scores(
                     ear, gaze)  
 
@@ -188,8 +184,8 @@ def main():
                                 cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 255), 1, cv2.LINE_AA)
                 
                 if tired or perclos_score>= perclos_tresh:
-                    counter+=1
-                    if counter>level_two_warning:
+                    tiredCounter+=1
+                    if tiredCounter>level_two_warning:
                         warnState = True
                     print("careful, you may be tired!")
                 if gaze is None:
@@ -220,12 +216,12 @@ def indication():
     fps_lim = 25
     tired, perclos_score = Scorer.get_PERCLOS(ear)
     gazeCounter = 0
-    counter = 0
+    tiredCounter = 0
     gaze = Eye_det.get_Gaze_Score(frame=gray, landmarks=landmarks)
     #running inside the loop
-    warnState = counter==2
+    warnState = tiredCounter==2
     if tired or perclos_score>= 0.15:
-        counter+=1
+        tiredCounter+=1
         print("careful, you may be tired!")
     if gaze is None:
         if gazeCounter>=fps_lim:
@@ -235,36 +231,6 @@ def indication():
     if warnState:
         print("please stop driving immediately! you are tired.")
     return
-
-def yawn_detection():
-    #also another way to do this is a yawn threshold of 20
-
-    #outside of the loop
-    prev_distance = lip_distance(landmarks)
-    start_yawn_timer = 0.0
-    stop_yawn_timer = 0.0
-    start_stop = False
-    #recommended to close your mouth at the start of the program so the original distance is almost none
-    original_distance = lip_distance(landmarks)
-
-    #running inside the loop
-    #checking if lips are opening
-    if lip_distance(landmarks)>prev_distance:
-
-        #checking the start of the yawn
-        if (prev_distance == original_distance) and not start_stop:
-            start_yawn_timer = time.perf_counter
-            start_stop = True
-
-        #checking the end of the yawn 
-        if(prev_distance == original_distance) and start_stop:
-            stop_yawn_timer = time.perf_counter
-            start_stop = False
-        
-        #if start_stop is false, then the yawn must be done and we calculate the time of the yawn, checking if it was greater than 4s
-        if not start_stop:
-            if (stop_yawn_timer-start_yawn_timer)>4:
-                print("You yawned!")
 '''
 
 if __name__ == "__main__":
