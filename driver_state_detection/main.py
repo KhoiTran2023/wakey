@@ -64,7 +64,7 @@ def main():
     yawnCounter = 0
     yawnTresh = 4
     perclos_tresh = 0.15
-    warnState = False
+    level_three_warning = 0
     level_two_warning = int(fps_lim*120*perclos_tresh)
 
     if not cap.isOpened():  # if the camera can't be opened exit the program
@@ -120,12 +120,12 @@ def main():
 
 
                 #yawn evaluation
-                if (distance > 40):
+                if (distance > 20):
                     yawnCounter += 1
                 else:
                     if(yawnCounter >= fps_lim*yawnTresh):
                         print("you yawned!")
-                        warnState = True
+                        level_three_warning +=1
                     yawnCounter = 0
 
             if len(faces) > 0:  # process the frame only if at least a face is found
@@ -187,8 +187,7 @@ def main():
                 if tired or perclos_score>= perclos_tresh:
                     tiredCounter+=1
                     if tiredCounter>level_two_warning:
-                        warnState = True
-                    print("careful, you may be tired!")
+                        level_three_warning += 1
 
                 if gaze is None:
                     if gazeCounter>=fps_lim:
@@ -196,9 +195,10 @@ def main():
                         print("danger, eyes closed!")
                     gazeCounter+=1
 
-                if warnState:
+                if level_three_warning >= 2:
                     print("please stop driving immediately! you are tired.")
-            
+                elif level_three_warning > 0:
+                    print("careful! you may be tired")
 
             cv2.imshow("Frame", frame)  # show the frame on screen
 

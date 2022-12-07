@@ -65,13 +65,20 @@ def show_keypoints(keypoints, frame):
     cv2.circle(frame, (x, y), 1, (0, 255, 255), -1)
     x = keypoints.part(30).x
     y = keypoints.part(30).y
-    cv2.circle(frame, (x, y), 1, (0, 255, 255), -1) 
-
+    cv2.circle(frame, (x, y), 1, (0, 255, 255), -1)
     x = keypoints.part(12).x
     y = keypoints.part(12).y
     cv2.circle(frame, (x, y), 1, (0, 255, 255), -1) 
     x = keypoints.part(4).x
     y = keypoints.part(4).y
+    cv2.circle(frame, (x, y), 1, (0, 255, 255), -1) 
+
+    #mouth
+    x = keypoints.part(48).x
+    y = keypoints.part(48).y
+    cv2.circle(frame, (x, y), 1, (0, 255, 255), -1) 
+    x = keypoints.part(54).x
+    y = keypoints.part(54).y
     cv2.circle(frame, (x, y), 1, (0, 255, 255), -1) 
     return
 
