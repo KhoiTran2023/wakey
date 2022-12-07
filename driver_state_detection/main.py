@@ -116,8 +116,9 @@ def main():
                 distance = lip_distance(shape)
 
                 lip = shape[48:60]
-                cv2.drawContours(frame, [lip], -1, (0, 255, 0), 1)
-                
+                cv2.drawContours(frame, [lip], -1, (0, 0, 255), 1)
+
+
                 #yawn evaluation
                 if (distance > 40):
                     yawnCounter += 1
@@ -188,11 +189,13 @@ def main():
                     if tiredCounter>level_two_warning:
                         warnState = True
                     print("careful, you may be tired!")
+
                 if gaze is None:
                     if gazeCounter>=fps_lim:
                         gazeCounter=0
                         print("danger, eyes closed!")
                     gazeCounter+=1
+
                 if warnState:
                     print("please stop driving immediately! you are tired.")
             
@@ -207,31 +210,6 @@ def main():
     cv2.destroyAllWindows()
 
     return
-
-
-#FUNCTIONS NOT TO BE USED YET, TESTING PHASE
-'''
-def indication():
-    # compute the PERCLOS score and state of tiredness
-    fps_lim = 25
-    tired, perclos_score = Scorer.get_PERCLOS(ear)
-    gazeCounter = 0
-    tiredCounter = 0
-    gaze = Eye_det.get_Gaze_Score(frame=gray, landmarks=landmarks)
-    #running inside the loop
-    warnState = tiredCounter==2
-    if tired or perclos_score>= 0.15:
-        tiredCounter+=1
-        print("careful, you may be tired!")
-    if gaze is None:
-        if gazeCounter>=fps_lim:
-            gazeCounter=0
-            print("danger, eyes closed!")
-        gazeCounter+=1
-    if warnState:
-        print("please stop driving immediately! you are tired.")
-    return
-'''
 
 if __name__ == "__main__":
     main()

@@ -39,11 +39,41 @@ def show_keypoints(keypoints, frame):
     :return: frame
         Returns the frame with all the 68 dlib face keypoints drawn
     """
-    for n in range(0, 68):
-        x = keypoints.part(n).x
-        y = keypoints.part(n).y
-        cv2.circle(frame, (x, y), 1, (0, 0, 255), -1)
-        return frame
+    
+    x = keypoints.part(42).x
+    y = keypoints.part(42).y
+    cv2.circle(frame, (x, y), 1, (0, 255, 255), -1)
+    x = keypoints.part(39).x
+    y = keypoints.part(39).y
+    cv2.circle(frame, (x, y), 1, (0, 255, 255), -1)
+    x = keypoints.part(36).x
+    y = keypoints.part(36).y
+    cv2.circle(frame, (x, y), 1, (0, 255, 255), -1)
+    x = keypoints.part(45).x
+    y = keypoints.part(45).y
+    cv2.circle(frame, (x, y), 1, (0, 255, 255), -1)
+
+    #Around the face
+    x = keypoints.part(1).x
+    y = keypoints.part(1).y
+    cv2.circle(frame, (x, y), 1, (0, 255, 255), -1)
+    x = keypoints.part(15).x
+    y = keypoints.part(15).y
+    cv2.circle(frame, (x, y), 1, (0, 255, 255), -1)
+    x = keypoints.part(8).x
+    y = keypoints.part(8).y
+    cv2.circle(frame, (x, y), 1, (0, 255, 255), -1)
+    x = keypoints.part(30).x
+    y = keypoints.part(30).y
+    cv2.circle(frame, (x, y), 1, (0, 255, 255), -1) 
+
+    x = keypoints.part(12).x
+    y = keypoints.part(12).y
+    cv2.circle(frame, (x, y), 1, (0, 255, 255), -1) 
+    x = keypoints.part(4).x
+    y = keypoints.part(4).y
+    cv2.circle(frame, (x, y), 1, (0, 255, 255), -1) 
+    return
 
 
 def midpoint(p1, p2):

@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 from numpy import linalg as LA
-from Utils import resize
+from Utils import resize, show_keypoints
 
 
 class EyeDetector:
@@ -47,6 +47,8 @@ class EyeDetector:
             x = self.keypoints.part(n).x
             y = self.keypoints.part(n).y
             cv2.circle(color_frame, (x, y), 1, (0, 0, 255), -1)
+
+        show_keypoints(self.keypoints, color_frame)
         return
 
     def get_EAR(self, frame, landmarks):
