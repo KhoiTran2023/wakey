@@ -15,7 +15,7 @@ from imutils import face_utils
 # capture source number select the webcam to use (default is zero -> built in camera)
 CAPTURE_SOURCE = 0
 
-detector = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")    #Faster but less accurate
+detector = cv2.CascadeClassifier("predictor/haarcascade_frontalface_default.xml")    #Faster but less accurate
 predictor = dlib.shape_predictor('predictor/shape_predictor_68_face_landmarks.dat')
 
 # camera matrix obtained from the camera calibration script, using a 9x6 chessboard
@@ -32,6 +32,18 @@ dist_coeffs = np.array(
 def main(page: f.Page):
     #======================FLET CODE======================
     page.title = "First Test Flet App"
+    page.vertical_alignment = f.MainAxisAlignment.CENTER
+
+    txt_number = f.TextField(value="0", text_align=f.TextAlign.RIGHT, width=100)
+
+    page.add(
+        f.Row(
+            [
+                txt_number,
+            ],
+            alignment=f.MainAxisAlignment.CENTER,
+        )
+    )
 
     #======================END FLET CODE======================
 
@@ -208,11 +220,11 @@ def main(page: f.Page):
 
             #==================================================================
             #cv2.imshow("Frame", frame)  # show the frame on screen
-            #==================================================================
 
-        # if the key "q" is pressed on the keyboard, the program is terminated
-        if cv2.waitKey(20) & 0xFF == ord('q'):
-            break
+            # if the key "q" is pressed on the keyboard, the program is terminated
+        '''if cv2.waitKey(20) & 0xFF == ord('q'):
+            break'''
+            #==================================================================
 
     cap.release()
     cv2.destroyAllWindows()
