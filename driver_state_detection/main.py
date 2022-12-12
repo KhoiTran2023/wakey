@@ -4,6 +4,8 @@ import cv2
 import dlib
 import numpy as np
 
+import flet as f
+
 from Utils import get_face_area, lip_distance
 from Eye_Dector_Module import EyeDetector as EyeDets
 from Attention_Scorer_Module import AttentionScorer as AttScorer
@@ -27,7 +29,9 @@ dist_coeffs = np.array(
     [[-0.03792548, 0.09233237, 0.00419088, 0.00317323, -0.15804257]], dtype="double")
 
 
-def main():
+def main(page: f.Page):
+
+    page.title = "First Test Flet App"
 
     ctime = 0  # current time (used to compute FPS)
     ptime = 0  # past time (used to compute FPS)
@@ -200,7 +204,7 @@ def main():
                 elif level_three_warning > 0:
                     print("careful! you may be tired")
 
-            cv2.imshow("Frame", frame)  # show the frame on screen
+            #cv2.imshow("Frame", frame)  # show the frame on screen
 
         # if the key "q" is pressed on the keyboard, the program is terminated
         if cv2.waitKey(20) & 0xFF == ord('q'):
@@ -211,5 +215,6 @@ def main():
 
     return
 
-if __name__ == "__main__":
-    main()
+f.app(target=main)
+#if __name__ == "__main__":
+    #main()

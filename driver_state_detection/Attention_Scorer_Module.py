@@ -189,4 +189,3 @@ class AttentionScorer:
             self.prev_time = time.time()
 
         return tired, perclos_score
-
