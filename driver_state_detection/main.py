@@ -30,8 +30,10 @@ dist_coeffs = np.array(
 
 
 def main(page: f.Page):
-
+    #======================FLET CODE======================
     page.title = "First Test Flet App"
+
+    #======================END FLET CODE======================
 
     ctime = 0  # current time (used to compute FPS)
     ptime = 0  # past time (used to compute FPS)
@@ -204,7 +206,9 @@ def main(page: f.Page):
                 elif level_three_warning > 0:
                     print("careful! you may be tired")
 
+            #==================================================================
             #cv2.imshow("Frame", frame)  # show the frame on screen
+            #==================================================================
 
         # if the key "q" is pressed on the keyboard, the program is terminated
         if cv2.waitKey(20) & 0xFF == ord('q'):
@@ -215,6 +219,12 @@ def main(page: f.Page):
 
     return
 
+#======================used for flet app initialization======================
 f.app(target=main)
-#if __name__ == "__main__":
-    #main()
+#==================================================================
+
+#used for cv2 frame
+'''
+if __name__ == "__main__":
+    main()
+'''
