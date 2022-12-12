@@ -6,7 +6,7 @@ import numpy as np
 
 import flet as f
 
-from Utils import get_face_area, lip_distance
+from Utils import get_face_area, lip_distance, add_alert
 from Eye_Dector_Module import EyeDetector as EyeDets
 from Attention_Scorer_Module import AttentionScorer as AttScorer
 
@@ -32,18 +32,6 @@ dist_coeffs = np.array(
 def main(page: f.Page):
     #======================FLET CODE======================
     page.title = "First Test Flet App"
-    page.vertical_alignment = f.MainAxisAlignment.CENTER
-
-    txt_number = f.TextField(value="0", text_align=f.TextAlign.RIGHT, width=100)
-
-    page.add(
-        f.Row(
-            [
-                txt_number,
-            ],
-            alignment=f.MainAxisAlignment.CENTER,
-        )
-    )
 
     #======================END FLET CODE======================
 
@@ -72,7 +60,7 @@ def main(page: f.Page):
     # instantiation of the attention scorer object, with the various thresholds
     # NOTE: set verbose to True for additional printed information about the scores
     Scorer = AttScorer(fps_lim, ear_tresh=0.15, ear_time_tresh=2, gaze_tresh=0.2,
-                       gaze_time_tresh=2, pitch_tresh=35, yaw_tresh=28, pose_time_tresh=2.5, verbose=False)
+                       gaze_time_tresh=2, pitch_tresh=35, verbose=False)
     
     # capture the input from the default system camera (camera number 0)
     cap = cv2.VideoCapture(CAPTURE_SOURCE)
@@ -90,7 +78,6 @@ def main(page: f.Page):
         exit()
     
     while True:  # infinite loop for webcam video capture
-
         delta_time = time.perf_counter() - prev_time  # delta time for FPS capping
         ret, frame = cap.read()  # read a frame from the webcam
 
@@ -144,6 +131,7 @@ def main(page: f.Page):
                     if(yawnCounter >= fps_lim*yawnTresh):
                         print("you yawned!")
                         level_three_warning +=1
+                        add_alert(page, "You yawned!")
                     yawnCounter = 0
 
             if len(faces) > 0:  # process the frame only if at least a face is found
@@ -167,7 +155,8 @@ def main(page: f.Page):
                 # compute the Gaze Score
                 gaze = Eye_det.get_Gaze_Score(frame=gray, landmarks=landmarks)
 
-
+                #uncomment for frame live
+                '''
                 # show the real-time EAR score
                 if ear is not None:
                     cv2.putText(frame, "EAR:" + str(round(ear, 3)), (10, 50),
@@ -188,7 +177,7 @@ def main(page: f.Page):
                                 cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 255), 1, cv2.LINE_AA)
 
                 # evaluate the scores for EAR, GAZE
-                asleep, looking_away, distracted = Scorer.eval_scores(
+                asleep = Scorer.eval_scores(
                     ear, gaze)  
 
                 # if the state of attention of the driver is not normal, show an alert on screen
@@ -201,6 +190,7 @@ def main(page: f.Page):
                 if distracted:
                     cv2.putText(frame, "DISTRACTED!", (10, 340),
                                 cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 255), 1, cv2.LINE_AA)
+                '''
                 
                 if tired or perclos_score>= perclos_tresh:
                     tiredCounter+=1
@@ -210,13 +200,16 @@ def main(page: f.Page):
                 if gaze is None:
                     if gazeCounter>=fps_lim:
                         gazeCounter=0
-                        print("danger, eyes closed!")
+                        add_alert(page, "Danger, eyes closed!")
+                        print("Danger, eyes closed!")
                     gazeCounter+=1
 
-                if level_three_warning >= 2:
+                if level_three_warning >= 3 and level_three_warning < 4:
                     print("please stop driving immediately! you are tired.")
-                elif level_three_warning > 0:
+                    level_three_warning += 1
+                elif level_three_warning > 0 and level_three_warning < 2:
                     print("careful! you may be tired")
+                    level_three_warning += 1
 
             #==================================================================
             #cv2.imshow("Frame", frame)  # show the frame on screen

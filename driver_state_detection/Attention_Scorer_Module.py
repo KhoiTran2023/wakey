@@ -3,8 +3,7 @@ import time
 
 class AttentionScorer:
 
-    def __init__(self, capture_fps: int, ear_tresh, gaze_tresh, perclos_tresh=0.15, ear_time_tresh=4.0, pitch_tresh=35,
-                 yaw_tresh=30, gaze_time_tresh=4.0, roll_tresh=None, pose_time_tresh=4.0, verbose=False):
+    def __init__(self, capture_fps: int, ear_tresh, gaze_tresh, perclos_tresh=0.15, ear_time_tresh=4.0, pitch_tresh=35, gaze_time_tresh=4.0, verbose=False):
         """
         Attention Scorer class that contains methods for estimating EAR,Gaze_Score,PERCLOS and Head Pose over time,
         with the given thresholds (time tresholds and value tresholds)
@@ -106,12 +105,6 @@ class AttentionScorer:
         if self.ear_counter >= self.ear_act_tresh:  # check if the ear cumulative counter surpassed the threshold
             asleep = True
 
-        if self.gaze_counter >= self.gaze_act_tresh:  # check if the gaze cumulative counter surpassed the threshold
-            looking_away = True
-
-        if self.pose_counter >= self.pose_act_tresh:  # check if the pose cumulative counter surpassed the threshold
-            distracted = True
-
         '''
         The 3 if blocks that follow are written in a way that when we have a score that's over it's value threshold, 
         a respective score counter (ear counter, gaze counter, pose counter) is increased and can reach a given maximum 
@@ -148,7 +141,7 @@ class AttentionScorer:
             print(
                 f"eye closed:{asleep}\tlooking away:{looking_away}\tdistracted:{distracted}")
 
-        return asleep, looking_away, distracted
+        return asleep
 
     def get_PERCLOS(self, ear_score):
         """

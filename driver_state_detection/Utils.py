@@ -1,5 +1,6 @@
 import numpy as np
 import cv2
+import flet as f
 
 
 def resize(frame, scale_percent):
@@ -126,3 +127,18 @@ def lip_distance(shape):
 
     distance = abs(top_mean[1] - low_mean[1])
     return distance
+
+def add_alert(page, msg):
+    page.add(
+        f.Card(
+            content = f.Container(
+                content = f.Column(
+                    [
+                    f.ListTile(
+                        title = f.Text(msg),
+                    )
+                    ]
+                )
+            )
+        )
+    )
