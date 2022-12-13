@@ -29,16 +29,20 @@ dist_coeffs = np.array(
     [[-0.03792548, 0.09233237, 0.00419088, 0.00317323, -0.15804257]], dtype="double")
 
 
-def main(page: f.Page):
-    #======================FLET CODE======================
+def main(page: f.Page): #COMMENTABLE delete parameters to run
+    #======================FLET CODE====================== COMMENTABLE
     page.title = "First Test Flet App"
+
+    lv = f.ListView(expand=1, spacing=10, padding=20, auto_scroll=True)
+
+    page.add(lv)
 
     #======================END FLET CODE======================
 
     ctime = 0  # current time (used to compute FPS)
     ptime = 0  # past time (used to compute FPS)
     prev_time = 0  # previous time variable, used to set the FPS limit
-    fps_lim = 9  # FPS upper limit value, needed for estimating the time for each frame and increasing performances
+    fps_lim = 7  # FPS upper limit value, needed for estimating the time for each frame and increasing performances
     time_lim = 1. / fps_lim  # time window for each frame taken by the webcam
 
     cv2.setUseOptimized(True)  # set OpenCV optimization to True
@@ -60,7 +64,7 @@ def main(page: f.Page):
     # instantiation of the attention scorer object, with the various thresholds
     # NOTE: set verbose to True for additional printed information about the scores
     Scorer = AttScorer(fps_lim, ear_tresh=0.15, ear_time_tresh=2, gaze_tresh=0.2,
-                       gaze_time_tresh=2, pitch_tresh=35, verbose=False)
+                       gaze_time_tresh=2, verbose=False)
     
     # capture the input from the default system camera (camera number 0)
     cap = cv2.VideoCapture(CAPTURE_SOURCE)
@@ -131,7 +135,7 @@ def main(page: f.Page):
                     if(yawnCounter >= fps_lim*yawnTresh):
                         print("you yawned!")
                         level_three_warning +=1
-                        add_alert(page, "You yawned!")
+                        add_alert(page, lv, "You yawned!") #COMMENTABLE
                     yawnCounter = 0
 
             if len(faces) > 0:  # process the frame only if at least a face is found
@@ -155,7 +159,7 @@ def main(page: f.Page):
                 # compute the Gaze Score
                 gaze = Eye_det.get_Gaze_Score(frame=gray, landmarks=landmarks)
 
-                #uncomment for frame live
+                #UNCOMMENTABLE for frame live
                 '''
                 # show the real-time EAR score
                 if ear is not None:
@@ -184,12 +188,6 @@ def main(page: f.Page):
                 if asleep:
                     cv2.putText(frame, "ASLEEP!", (10, 300),
                                 cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 255), 1, cv2.LINE_AA)
-                if looking_away:
-                    cv2.putText(frame, "LOOKING AWAY!", (10, 320),
-                                cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 255), 1, cv2.LINE_AA)
-                if distracted:
-                    cv2.putText(frame, "DISTRACTED!", (10, 340),
-                                cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 255), 1, cv2.LINE_AA)
                 '''
                 
                 if tired or perclos_score>= perclos_tresh:
@@ -200,35 +198,40 @@ def main(page: f.Page):
                 if gaze is None:
                     if gazeCounter>=fps_lim:
                         gazeCounter=0
-                        add_alert(page, "Danger, eyes closed!")
+                        add_alert(page, lv, "Danger, eyes closed!")#COMMENTABLE
                         print("Danger, eyes closed!")
                     gazeCounter+=1
 
                 if level_three_warning >= 3 and level_three_warning < 4:
                     print("please stop driving immediately! you are tired.")
+                    add_alert(page, lv, "Please stop driving immediately! you are tired.")#COMMENTABLE
                     level_three_warning += 1
                 elif level_three_warning > 0 and level_three_warning < 2:
                     print("careful! you may be tired")
+                    add_alert(page, lv, "Careful! You may be tired.")#COMMENTABLE
                     level_three_warning += 1
 
-            #==================================================================
-            #cv2.imshow("Frame", frame)  # show the frame on screen
+            #==================================================================UNCOMMENTABLE
+            '''
+            cv2.imshow("Frame", frame)  # show the frame on screen
 
             # if the key "q" is pressed on the keyboard, the program is terminated
-        '''if cv2.waitKey(20) & 0xFF == ord('q'):
-            break'''
-            #==================================================================
+        if cv2.waitKey(20) & 0xFF == ord('q'):
+            break
+
+        '''
+            #==================================================================UNCOMMENTABLE
 
     cap.release()
     cv2.destroyAllWindows()
 
     return
 
-#======================used for flet app initialization======================
+#======================used for flet app initialization======================COMMENTABLE
 f.app(target=main)
-#==================================================================
+#==================================================================COMMENTABLE
 
-#used for cv2 frame
+#used for cv2 frame UNCOMMENTABLE
 '''
 if __name__ == "__main__":
     main()
