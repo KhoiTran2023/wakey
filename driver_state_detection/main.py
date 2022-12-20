@@ -31,12 +31,13 @@ dist_coeffs = np.array(
 
 def main(page: f.Page): #COMMENTABLE delete parameters to run
     #======================FLET CODE====================== COMMENTABLE
+    
     page.title = "First Test Flet App"
 
     lv = f.ListView(expand=1, spacing=10, padding=20, auto_scroll=True)
 
     page.add(lv)
-
+    
     #======================END FLET CODE======================
 
     ctime = 0  # current time (used to compute FPS)
@@ -229,7 +230,7 @@ def main(page: f.Page): #COMMENTABLE delete parameters to run
 
 #======================used for flet app initialization======================COMMENTABLE
 f.app(target=main)
-#==================================================================COMMENTABLE
+#==================================================================
 
 #used for cv2 frame UNCOMMENTABLE
 '''
